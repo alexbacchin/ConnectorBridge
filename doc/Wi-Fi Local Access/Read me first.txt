@@ -1,0 +1,9 @@
+----------------------------------2020/3/3--------------------------------------
+1. EVAL Tool.zip is used to evaluate the Bridge local Wi-Fi access features. Please enter the correct Key to start device control.
+2. Accesstoken.zip is used to create accesstoken.  
+3. Please make sure your Bridge firmware ver. is 0.7.2 or above. You can manually update it by using Connector APP. 
+    Path: Top-left icon on the home screen ---> Location Setting ---> Bridge Setting ---> Firmware setting
+4. Make sure your computer and Bridge are under the same Wi-Fi network.
+6. Any question, please contact support@shadeconnector.com   
+
+
