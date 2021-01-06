@@ -1,0 +1,50 @@
+#!/usr/bin/python
+
+import sys
+import json
+import socket
+
+bln = sys.argv[1]
+command = sys.argv[2]
+operation = command
+data = "targetPosition"
+blind = "0001"
+
+if bln == "dining":
+   blind = "0001"
+if bln == "patio":
+   blind = "0002"
+if bln == "bedroom":
+   blind = "0003"
+if bln == "study":
+   blind = "0004"
+if bln == "ella":
+   blind = "0005"
+
+if command == "close" or command == "down":
+   operation = "0"
+   data = "operation"
+if command == "open" or command == "up":
+   operation = "1"
+   data = "operation"
+if command == "stop" or command == "halt":
+   operation = "2"
+   data = "operation"
+if command == "status" or command == "query":
+   operation = "5"
+   data = "operation"
+
+Payload = str.encode('{"msgType":"WriteDevice",\
+                        "mac":"--CONTROLLER MAC--'+blind+'",\
+                        "DeviceType":"10000000",\
+                        "AccessToken":"--YOUR ACCESS TOKEN--",\
+                        "msgID":"21200331105735705",\
+                        "data":{"'+data+'":'+operation+'}\
+                      }')
+server = ("--CONTROLLER IP--", 32100)
+buffer = 1024
+
+UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+UDPClientSocket.sendto(Payload, server)
+response = UDPClientSocket.recvfrom(buffer)
+print(json.dumps(json.loads(format(response[0])), indent=4, sort_keys=True))

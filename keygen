@@ -1,0 +1,14 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use Crypt::Mode::ECB;
+
+my $data = '--TOKEN FROM DISCOVER--';
+my $key = '--KEY FROM APP--';
+
+my $ecb = Crypt::Mode::ECB->new('AES');
+my $ciphertext =$ecb->encrypt($data, $key);
+$ciphertext =~ s/(.)/sprintf("%x",ord($1))/eg;
+print substr(uc($ciphertext),0,32),"\n";
+
