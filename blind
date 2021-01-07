@@ -57,9 +57,9 @@ for x in blinds:
 sanityCheck()
 
 Payload = str.encode('{"msgType":"WriteDevice",\
-                        "mac":"ac67b24a6a34'+blind+'",\
+                        "mac":"--MAC--'+blind+'",\
                         "DeviceType":"10000000",\
-                        "AccessToken":"BA17B7154E88FDF926414D82F175A045",\
+                        "AccessToken":"--TOKEN--",\
                         "msgID":"21200331105735705",\
                         "data":{"'+data+'":'+operation+'}\
                       }')
