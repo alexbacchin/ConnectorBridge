@@ -4,10 +4,10 @@ You will need the MAC address of the blinds, the device types, and the token.
 The MAC address of the blinds is the MAC address of the controller with the blind number appended.
 
 
-Now install the 'controller' app on your mobile.
+Now install the 'connector' app on your mobile.
 Run this, and login with your details.
 (BlocBlinds have their own app that mimics this, but doesn't have the 'key' feature.)
-You can saftely install the 'controller' app, retrieve the key, and uninstall it.
+You can saftely install the 'connector' app, retrieve the key, and uninstall it.
 Go to the HELP and ABOUT page.
 Now tap this page 5 times and a popup window appears.
 Make a note of this, it's your 'key'.
