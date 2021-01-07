@@ -1,23 +1,24 @@
 Run the 'discover' script.
 This will output JSON formatted data.
 You will need the MAC address of the blinds, the device types, and the token.
-The MAC address of the blinds is the MAC address of the controller with the blind number appended.
-
+The MAC address of the blinds is simply the MAC address of the controller with the blind number appended.
 
 Now install the 'connector' app on your mobile.
 Run this, and login with your details.
-(BlocBlinds have their own app that mimics this, but doesn't have the 'key' feature.)
-You can saftely install the 'connector' app, retrieve the key, and uninstall it.
+(BlocBlinds have their own app, as, I'm sure, do other companies, but it doesn't have the 'key' feature.)
+You can saftely install the 'connector' app, retrieve the key, and uninstall it, it won't delete any data.
 Go to the HELP and ABOUT page.
 Now tap this page 5 times and a popup window appears.
 Make a note of this, it's your 'key'.
 Close the app and exit.
+This 'key' may be available directly from the bridge, but the API doesn't document it, so for now we need to use their app.
 
-
-Now edit the 'keygen' script.
+Helpfully, we are shown an encryption program at the end of the API.
+Unhelpfully, it's around 200 lines of code.
+The supplied 'keygen' program is 7 lines of Perl and does exactly what we need.
+Edit the 'keygen' script.
 Add your 'token' from discover, into $data
 Add the 'key' from the controller app into $key
-
 Run this, and you will be given an "AccessToken"
 Add this to the 'blind' script.
 Name your blinds according to your household names.
