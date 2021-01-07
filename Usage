@@ -15,7 +15,7 @@ This 'key' may be available directly from the bridge, but the API doesn't docume
 
 Helpfully, we are shown an encryption program at the end of the API.
 Unhelpfully, it's around 200 lines of code.
-The supplied 'keygen' program is 7 lines of Perl and does exactly what we need.
+The supplied 'keygen' program is 10 lines of Perl and does exactly what we need.
 Edit the 'keygen' script.
 Add your 'token' from discover, into $data
 Add the 'key' from the controller app into $key
