@@ -4,45 +4,65 @@ import sys
 import json
 import socket
 
+# The code is not fancy or elegant, but it works.
+#
+# Paul McGowan 2021
+
+
+# Add the names of your blinds here together with
+# the IP address of your bridge.
+blinds = ["dining","patio","bedroom","study","ella"]
+server = ("10.10.255.66", 32100)
+
+def sanityCheck():
+   if blind == "0000":
+      print "Unknown blind name "+bln
+      exit(0)
+   if data <> "operation":
+      if command.isdigit() == True:
+         pct = int(command)
+         if pct < 0 or pct > 100:
+            print "Blind movement must be between 0 and 100"
+            exit(0)
+      else:
+         print "Blind movement must be numeric and between 0 and 100"
+         exit(0)
+
+if len(sys.argv) <> 3:
+   print "blind [name] [open/close/up/down/stop/query/status/0-100]"
+   exit(0)
+
 bln = sys.argv[1]
 command = sys.argv[2]
+buffer = 1024
+blind = "0000"
 operation = command
 data = "targetPosition"
-blind = "0001"
 
-if bln == "dining":
-   blind = "0001"
-if bln == "patio":
-   blind = "0002"
-if bln == "bedroom":
-   blind = "0003"
-if bln == "study":
-   blind = "0004"
-if bln == "ella":
-   blind = "0005"
+cmds = ["close","down","open","up","stop","halt","status","query"]
+ops = ["0","0","1","1","2","2","5","5"]
+c = 0
+for x in cmds:
+   if command == x:
+      operation = ops[c]
+      data = "operation"
+   c += 1
 
-if command == "close" or command == "down":
-   operation = "0"
-   data = "operation"
-if command == "open" or command == "up":
-   operation = "1"
-   data = "operation"
-if command == "stop" or command == "halt":
-   operation = "2"
-   data = "operation"
-if command == "status" or command == "query":
-   operation = "5"
-   data = "operation"
+c = 0
+for x in blinds:
+   c += 1
+   if bln == x:
+      blind = "000" + str(c)
+
+sanityCheck()
 
 Payload = str.encode('{"msgType":"WriteDevice",\
-                        "mac":"--CONTROLLER MAC--'+blind+'",\
+                        "mac":"ac67b24a6a34'+blind+'",\
                         "DeviceType":"10000000",\
-                        "AccessToken":"--YOUR ACCESS TOKEN--",\
+                        "AccessToken":"BA17B7154E88FDF926414D82F175A045",\
                         "msgID":"21200331105735705",\
                         "data":{"'+data+'":'+operation+'}\
                       }')
-server = ("--CONTROLLER IP--", 32100)
-buffer = 1024
 
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 UDPClientSocket.sendto(Payload, server)
