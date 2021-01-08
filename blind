@@ -65,7 +65,7 @@ for x in cmds:
    c += 1
 
 # calculate blind ID. Blinds are added in sequence they were added to the controller.
-# In our case, DINING is 0001
+# In our case, DINING is 0001 PATIO is 0002
 c = 0
 for x in blinds:
    c += 1
@@ -91,7 +91,7 @@ response = UDPClientSocket.recvfrom(buffer)
 data = json.loads(json.dumps(json.loads(format(response[0])), indent=4, sort_keys=True))
 
 # Print the response. We only want battery power and blind position.
-# battery 1500 is fully charged, so may convert to %
+# battery 1500 is fully charged (possibly), so may convert to %
 print "Battery level :"+str((data["data"]["batteryLevel"]))
 print "Current position :"+str((data["data"]["currentPosition"]))
 if command == "stop" or command == "halt":
