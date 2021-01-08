@@ -1,9 +1,5 @@
 #!/usr/bin/python
 
-import sys
-import json
-import socket
-
 # Paul McGowan 2021
 #
 # Add the names of your blinds here together with
@@ -13,10 +9,16 @@ import socket
 # The code is not elegant, but it works and provides a 
 # starting point.
 
+import sys
+import json
+import socket
+import random
+import datetime
+
 blinds = ["dining","patio","bedroom","study","ella"]
-server = ("+++Bridge IP", 32100)
-token = "+++TOKEN+++"
-mac = "+++mac address+++"
+server = ("+++Hub IP+++", 32100)
+token = "+++Token from keygen+++"
+mac = "+++mac from discover+++"
 
 def sanityCheck():
    if blind == "0000":
@@ -33,7 +35,7 @@ def sanityCheck():
          exit(0)
 
 if len(sys.argv) <> 3:
-   print "blind [name] [open/close/up/down/stop/query/status/0-100]"
+   print "blind [name] [open/close/up/down/stop/halt/query/status/0-100]"
    exit(0)
 
 bln = sys.argv[1]
@@ -42,6 +44,9 @@ buffer = 1024
 blind = "0000"
 operation = command
 data = "targetPosition"
+rn = str(random.randint(100,159))
+t = datetime.datetime.now()
+id = t.strftime("%Y")+t.strftime("%m")+t.strftime("%d")+t.strftime("%H")+t.strftime("%M")+t.strftime("%S")+rn
 
 cmds = ["close","down","open","up","stop","halt","status","query"]
 ops = ["0","0","1","1","2","2","5","5"]
@@ -64,12 +69,23 @@ Payload = str.encode('{"msgType":"WriteDevice",\
                         "mac":"'+mac+''+blind+'",\
                         "DeviceType":"10000000",\
                         "AccessToken":"'+token+'",\
-                        "msgID":"21200331105735705",\
+                        "msgID":"'+id+'",\
                         "data":{"'+data+'":'+operation+'}\
                       }')
 
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 UDPClientSocket.sendto(Payload, server)
 response = UDPClientSocket.recvfrom(buffer)
-print(json.dumps(json.loads(format(response[0])), indent=4, sort_keys=True))
+data = json.loads(json.dumps(json.loads(format(response[0])), indent=4, sort_keys=True))
 
+print "Battery level :"+str((data["data"]["batteryLevel"]))
+print "Current position :"+str((data["data"]["currentPosition"]))
+if command == "stop" or command == "halt":
+   print "Blind movement halted"
+   exit(0)
+if command <> "status":
+   if command == "open" or command == "up":
+      command = "0"
+   if command == "close" or command == "down":
+      command = "100"
+   print "New position :"+command
