@@ -20,6 +20,7 @@ server = ("+++Hub IP+++", 32100)
 token = "+++Token from keygen+++"
 mac = "+++mac from discover+++"
 
+# This checks we have valid blind name and command
 def sanityCheck():
    if blind == "0000":
       print "Unknown blind name "+bln
@@ -44,10 +45,16 @@ buffer = 1024
 blind = "0000"
 operation = command
 data = "targetPosition"
+
+# Now we generate the message ID
+# Its the timestamp with 3 extra character
+# Haven't worked out what they are yet
+# so 3 random numbers added
 rn = str(random.randint(100,159))
 t = datetime.datetime.now()
 id = t.strftime("%Y")+t.strftime("%m")+t.strftime("%d")+t.strftime("%H")+t.strftime("%M")+t.strftime("%S")+rn
 
+# Assign the operation code dependant on our command
 cmds = ["close","down","open","up","stop","halt","status","query"]
 ops = ["0","0","1","1","2","2","5","5"]
 c = 0
@@ -57,14 +64,18 @@ for x in cmds:
       data = "operation"
    c += 1
 
+# calculate blind ID. Blinds are added in sequence they were added to the controller.
+# In our case, DINING is 0001
 c = 0
 for x in blinds:
    c += 1
    if bln == x:
       blind = "000" + str(c)
 
+# Check we entered sensible info
 sanityCheck()
 
+# Build the JSON data to send
 Payload = str.encode('{"msgType":"WriteDevice",\
                         "mac":"'+mac+''+blind+'",\
                         "DeviceType":"10000000",\
@@ -73,11 +84,14 @@ Payload = str.encode('{"msgType":"WriteDevice",\
                         "data":{"'+data+'":'+operation+'}\
                       }')
 
+# Open UDP socket and send the data
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 UDPClientSocket.sendto(Payload, server)
 response = UDPClientSocket.recvfrom(buffer)
 data = json.loads(json.dumps(json.loads(format(response[0])), indent=4, sort_keys=True))
 
+# Print the response. We only want battery power and blind position.
+# battery 1500 is fully charged, so may convert to %
 print "Battery level :"+str((data["data"]["batteryLevel"]))
 print "Current position :"+str((data["data"]["currentPosition"]))
 if command == "stop" or command == "halt":
