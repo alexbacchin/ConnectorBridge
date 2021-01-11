@@ -3,8 +3,8 @@
 import binascii
 from Crypto.Cipher import AES
 
-data = '37412C478E0FBEAB';
-key = '42cc19ac-7922-40';
+data = '+++TOKEN+++';
+key = '+++KEY+++';
 aes = AES.new(key, AES.MODE_ECB)
 enc = (binascii.hexlify(aes.encrypt(data)).upper()).decode()
 print (enc)
