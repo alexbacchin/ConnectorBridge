@@ -5,6 +5,5 @@ from Crypto.Cipher import AES
 
 data = '+++++TOKEN++++++';
 key = '+++++++KEY++++++';
-aes = AES.new(key, AES.MODE_ECB)
-enc = (binascii.hexlify(aes.encrypt(data)).upper()).decode()
-print (enc)
+
+print ((binascii.hexlify(AES.new(key, AES.MODE_ECB).encrypt(data)).upper()).decode())
