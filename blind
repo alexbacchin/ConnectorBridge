@@ -87,8 +87,7 @@ Payload = str.encode('{"msgType":"WriteDevice",\
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 UDPClientSocket.sendto(Payload, server)
 response = UDPClientSocket.recvfrom(buffer)
-data = json.loads(json.dumps(json.loads(format(response[0])), indent=4, sort_keys=True))
-
+data = json.loads(format(response[0]))
 # Print out some response data
 batLevel = (data["data"]["batteryLevel"])
 batPC = int(100*float(batLevel)/1200)
