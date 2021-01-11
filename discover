@@ -5,11 +5,10 @@ import socket
 
 server  = ("238.0.0.18", 32100)
 payload = str.encode('{"msgType":"GetDeviceList","msgID":"2023465678"}')
-buffer  = 1024
 
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 UDPClientSocket.sendto(payload, server)
-response = UDPClientSocket.recvfrom(buffer)
+response = UDPClientSocket.recvfrom(1024)
 data = json.loads(format(response[0]))
 print ("MAC address "+(str(data["mac"])))
 print ("Token "+(str(data["token"])))
