@@ -1,0 +1,10 @@
+#!/usr/bin/python3
+
+import binascii
+from Crypto.Cipher import AES
+
+data = '37412C478E0FBEAB';
+key = '42cc19ac-7922-40';
+aes = AES.new(key, AES.MODE_ECB)
+enc = (binascii.hexlify(aes.encrypt(data)).upper()).decode()
+print (enc)

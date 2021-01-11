@@ -1,0 +1,51 @@
+There are 3 Python scripts
+discover - Get the mac address of the hub and the token
+keygen - Generate the AccessToken form the app key and token
+blind - script to control the blinds
+
+You may need to install Pycrypto (sudo pip3 install pycrypto) for the keygen script
+
+Step 1. Find the MAC address and Token
+Edit the discover script to add the IP address of your controller.
+Run the discover script.
+This will give the MAC address of your hub, together with the Token you need to generate the Access Token.
+
+
+Step 2. Retrieve the key
+Install the 'controller' app on your mobile from the play store.
+(BlocBlinds have their own app that mimics this, but doesn't have the 'key' feature.
+You can saftely install the 'controller' app, retrieve the key, and uninstall it.)
+Run this, and login with same details you use in your current app.
+Go to the HELP and ABOUT page.
+Now tap this page 5 times and a popup window appears.
+Make a note of this string, it's your 'key'.
+Close the app and exit.
+There may be a way to get this directly from the hub, but it's not documented in the API.
+
+
+Step 3. Generate your Access Token
+Edit the keygen script.
+Add your 'token' from discover, into $data
+Add the 'key' from the controller app into $key
+Run this, and you will be given an "AccessToken"
+
+Step 4. Edit the 'blind' script
+Add your AccessToken, MAC address and IP address of your hub to the 'blind' script.
+Name your blinds according to your household names.
+Blinds must be added in the order in which they were programmed to your hub.
+The hub knows them as 'mac address'+0001...0099 it doesn't use friendly names.
+
+Run the script like this...
+
+blind [name] [up/down/open/close/query/status/percentage]
+
+To open the study blind 50%
+blind study 50
+
+To query the patio blind
+blind patio query
+
+To open the patio blind
+blind patio open
+
+The script returns the postition of the blind and its battery status.
