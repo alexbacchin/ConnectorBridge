@@ -1,0 +1,36 @@
+This script allows you control blinds that have programmed into a Dooya Hub.
+
+The only piece of data needed is the key generated the 'controller' app.
+
+Step 1. Retrieve the key
+Install the 'controller' app on your mobile from the play store.
+(BlocBlinds have their own app that mimics this, but doesn't have the 'key' feature.
+You can saftely install the 'controller' app, retrieve the key, and uninstall it.)
+Run this, and login with same details you use in your current app.
+Go to the HELP and ABOUT page.
+Now tap this page 5 times and a popup window appears.
+Make a note of this string, it's your 'key'.
+Close the app and exit.
+There may be a way to get this directly from the hub, but it's not documented in the API.
+(See Update)
+
+Step 2. Edit the 'blind' script
+Add the 'key' provided by the controller app
+Name your blinds according to your household names.
+Blinds must be added in the order in which they were programmed to your hub.
+The hub knows them as 'mac address'+0001...0099 it doesn't use friendly names.
+
+Run the script like this...
+
+blind [name/all] [up/down/open/close/query/status/percentage]
+
+To open the study blind 50%
+blind study 50
+
+To query the patio blind
+blind patio query
+
+To open the patio blind
+blind patio open
+
+The script returns the postition of the blind and its battery status.
