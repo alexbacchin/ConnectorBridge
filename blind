@@ -27,7 +27,7 @@ if len(sys.argv) != 3:
 # Use the TOKEN to generate the AccessToken
 t = datetime.datetime.now()
 rn = str(random.randint(100,159))
-id = t.strftime("%Y")+t.strftime("%m")+t.strftime("%d")+t.strftime("%H")+t.strf>
+id = t.strftime("%Y")+t.strftime("%m")+t.strftime("%d")+t.strftime("%H")+t.strftime("%M")+t.strftime("%S")+rn
 payload = str.encode('{"msgType":"GetDeviceList","msgID":"'+id+'"}')
 UDPsend = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 UDPsend.settimeout(1)
