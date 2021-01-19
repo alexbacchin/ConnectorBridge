@@ -18,9 +18,31 @@ from Crypto.Cipher import AES
 key = 'XXXXXXXX-XXXX-XX';
 blinds = ["dining","patio","bedroom","study","kitchen"]
 
-# If we don't enter 2 parameters, display a usage hint and exit
+def selfTest():
+   t = datetime.datetime.now()
+   rn = str(random.randint(100,159))
+   id = t.strftime("%Y")+t.strftime("%m")+t.strftime("%d")+t.strftime("%H")+t.strftime("%M")+t.strftime("%S")+rn
+   payload = str.encode('{"msgType":"GetDeviceList","msgID":"'+id+'"}')
+   UDPsend = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+   UDPsend.settimeout(1)
+   try:
+      UDPsend.sendto(payload, ("238.0.0.18",32100))
+      data = json.loads(format(UDPsend.recvfrom(1024)[0].decode("utf-8")))
+      tkn = str(data["token"])
+      token = ((binascii.hexlify(AES.new(key, AES.MODE_ECB).encrypt(tkn)).upper()).decode())
+   except socket.timeout:
+      print ("Hub is not responding")
+      exit (0)
+   print ("Firmware version "+str(data["fwVersion"]))
+   print ("MAC address "+str(data["mac"]))
+   print ("Key "+key)
+   print ("Token "+tkn)
+   print ("Access Token "+token)
+
+# If we don't enter 2 parameters, display a usage hint, hub data and exit
 if len(sys.argv) != 3:
    print ("blind [name/all] [open/close/up/down/stop/halt/query/status/0-100]")
+   selfTest()
    exit(0)
 
 # Retrieve the MAC address and TOKEN from the hub
