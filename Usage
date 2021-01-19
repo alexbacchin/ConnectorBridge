@@ -24,6 +24,9 @@ Run the script like this...
 
 blind [name/all] [up/down/open/close/query/status/percentage]
 
+Running the script with no parameters displays the usage instructions and
+data from the hub.
+
 To open the study blind 50%
 blind study 50
 
