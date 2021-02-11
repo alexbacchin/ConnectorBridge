@@ -3,7 +3,7 @@ already data available, the MAC address, TOKEN and such.
 If I shut down data and WiFi on my phone the key is still displayed.
 It may have cached this from the first time it was requested however.
 The KEY appears to be a set of hex pairs seperated by dashes, however,
-it IS case sensitive, so the fact mine resembles HEX is purely coincidental.
+it IS case sensitive, so the fact mine resembles HEX is possibly coincidental.
 I have tried various permutations of MAC and TOKEN in an attempt to generate the
 KEY, but have had no luck.
 I have tried querying the hub with phrases such as 'GetDeviceKey',
