@@ -1,128 +1,109 @@
 #!/usr/bin/python3
 
-# Script to control smart blinds via a Dooya Hub
+# Simple program to control blinds programmed into a Dooya Hub
+#
+# MIT License
 #
 # Paul McGowan 2021
-#
-# MIT License terms apply
 
-import sys, json, socket, random, datetime, binascii
+import os, sys, json, socket, random, datetime, binascii
 
 from Crypto.Cipher import AES
 
-# Enter the key from the 'controller' app here
-# and edit the names of the blnds to suit you.
-# Delete any blinds you don't need, and add extra if needed.
-# No further changes are needed to this file.
-# It calculates everything else it needs.
-key = 'XXXXXXXX-XXXX-XX';
-blinds = ["dining","patio","bedroom","study","kitchen"]
+# Add the key from the 'controller' app here and edit the blind names
+# no firther changes are needed to the file
+key = 'xxxxxxxx-xxxx-xx'
+blinds = ["blind1","blind2","blind3","blind4","blind5"]
 
+# Function to send the data to the hub and return JSON formatted data
+def UDP(cmd):
+   try:
+      UDPsend = socket.socket(family=socket.AF_INET,type=socket.SOCK_DGRAM)
+      UDPsend.settimeout(1)
+      UDPsend.sendto(cmd,("238.0.0.18",32100))
+      data = json.loads(format(UDPsend.recvfrom(1024)[0].decode("utf-8")))
+   except socket.timeout:
+      sys.exit("Hub is not responding")
+   finally:
+      UDPsend.close()
+   return(data)
 
-
-# Retrieve the MAC address and TOKEN from the hub
-# Use the TOKEN to generate the AccessToken
+# Build the message ID from date/time and 3 random characters
 t = datetime.datetime.now()
-rn = str(random.randint(100,159))
-id = t.strftime("%Y")+t.strftime("%m")+t.strftime("%d")+t.strftime("%H")+t.strftime("%M")+t.strftime("%S")+rn
+dt = t.strftime("%Y")+t.strftime("%m")+t.strftime("%d")+t.strftime("%H")+t.strftime("%M")+t.strftime("%S")
+id = dt + str(random.randint(100,159))
+# Build the payload to send to the hub
 payload = str.encode('{"msgType":"GetDeviceList","msgID":"'+id+'"}')
-UDPsend = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-UDPsend.settimeout(1)
-try:
-   UDPsend.sendto(payload, ("238.0.0.18",32100))
-   data = json.loads(format(UDPsend.recvfrom(1024)[0].decode("utf-8")))
-   mac = str(data["mac"])
-   token = ((binascii.hexlify(AES.new(key, AES.MODE_ECB).encrypt(str(data["token"]))).upper()).decode())
-except socket.timeout:
-   print ("Hub is not responding")
-   exit (0)
 
-# If we don't enter 2 parameters, display a usage hint, hub data, and exit
+# Send the data to the hub
+data = UDP(payload)
+
+# Extract the MAC address, and calculate the AccessToken
+mac = str(data["mac"])
+token = (binascii.hexlify(AES.new(key,AES.MODE_ECB).encrypt(str(data["token"]))).upper()).decode()
+
+# If we didn't enter enough commands display usage and hub data
+# This is useful to check the hub is working
 if len(sys.argv) != 3:
-   print ("blind [name/all] [open/close/up/down/stop/halt/query/status/0-100]")
+   print (os.path.basename(__file__)+" [name/all] [open/close/up/down/stop/halt/query/status/0-100]")
    print ("Firmware version "+str(data["fwVersion"]))
    print ("MAC address "+mac)
    print ("Key "+key)
    print ("Token "+str(data["token"]))
-   print ("Access Token "+token)
-   exit(0)
+   sys.exit("Access Token "+token)
 
-# Get the blind name and command
+blind = "9999"
 bln = sys.argv[1]
 command = sys.argv[2]
-blind = "9999"
 operation = command
 data = "targetPosition"
-# Build the msgID which is a date/time string with a few
-# extra characters. lazily, we add 3 random numbers
-rn = str(random.randint(100,159))
-t = datetime.datetime.now()
-id = t.strftime("%Y")+t.strftime("%m")+t.strftime("%d")+t.strftime("%H")+t.strftime("%M")+t.strftime("%S")+rn
-
-# Assign the operation code and blind number
+# Change the ID string so the hub sees a different ID and expects a new command
+id = dt + str(random.randint(200,259))
+# These are commands we enter, together with the codes the hub understands
 cmds = ["close","down","open","up","stop","halt","status","query"]
 ops = ["0","0","1","1","2","2","5","5"]
+# Now find the blind number and get the command
 c = 0
 for x in cmds:
    if command == x:
       operation = ops[c]
       data = "operation"
    c += 1
-
 c = 0
 for x in blinds:
    c += 1
    if bln == x:
       blind = "000" + str(c)
+
+# Check we have entered valid information
 if bln == "all":
    blind = "0000"
 
-# If we didn't enter a valid blind name we stop here
 if blind == "9999":
-   print ("Unknown blind name "+bln)
-   exit(0)
+   sys.exit("Unknown blind name "+bln)
 
-# You can't query the status of more than one blind at a time.
 if blind == "0000" and operation == "5":
-   print ("You must query individual blinds for status")
-   exit(0)
+   sys.exit("You must query individual blinds for status")
 
-# If we specify a percentage, check it's within limits
 if data != "operation":
    if command.isdigit() == True:
       pct = int(command)
       if pct < 0 or pct > 100:
-         print ("Blind movement must be between 0 and 100")
-         exit(0)
+         sys.exit("Blind movement must be between 0 and 100")
    else:
-      print ("Blind movement must be numeric and between 0 and 100")
-      exit(0)
+      sys.exit("Blind movement must be numeric and between 0 and 100")
 
-# Build the payload to send to the hub
-payload = str.encode('{"msgType":"WriteDevice",\
-                        "mac":"'+mac+''+blind+'",\
-                        "DeviceType":"10000000",\
-                        "AccessToken":"'+token+'",\
-                        "msgID":"'+id+'",\
-                        "data":{"'+data+'":'+operation+'}\
-                      }')
-# Send the data to the hub, and retrieve the reply
-UDPsend = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-UDPsend.settimeout(1)
-try:
-   UDPsend.sendto(payload, ("238.0.0.18",32100))
-   data = json.loads(format(UDPsend.recvfrom(1024)[0].decode("utf-8")))
-except socket.timeout:
-   print ("Hub is not responding")
-   exit (0)
+# Build the payload string to send the hub
+payload = str.encode('{"msgType":"WriteDevice","mac":"'+mac+''+blind+'","DeviceType":"10000000","AccessToken":"'+token+'","msgID":"'+id+'","data":{"'+data+'":'+operation+'}}')
 
-# Print battery status, and blind position data
-bat = str(int(100*float(data["data"]["batteryLevel"])/1200))
-print ("Battery "+bat+"%")
-print ("Blind position "+str((data["data"]["currentPosition"]))+"%")
+# Send the data
+data = UDP(payload)
+
+# Print confirmation data
+print ("Battery "+str(int(100*float(data["data"]["batteryLevel"])/1200))+"%")
+print ("Blind position "+str(data["data"]["currentPosition"])+"%")
 if command == "stop" or command == "halt":
-   print ("Blind movement halted")
-   exit(0)
+   sys.exit("Blind movement halted")
 if command == "query":
    command = "status"
 if command != "status":
