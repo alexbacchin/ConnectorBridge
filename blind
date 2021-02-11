@@ -10,7 +10,7 @@ import os, sys, json, socket, random, datetime, binascii
 
 from Crypto.Cipher import AES
 
-# Add the key from the 'controller' app here and edit the blind names
+# Add the key from the 'connector' app here and edit the blind names
 # no firther changes are needed to the file
 key = 'xxxxxxxx-xxxx-xx'
 blinds = ["blind1","blind2","blind3","blind4","blind5"]
