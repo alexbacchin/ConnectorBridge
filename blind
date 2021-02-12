@@ -99,6 +99,11 @@ payload = str.encode('{"msgType":"WriteDevice","mac":"'+mac+''+blind+'","DeviceT
 # Send the data
 data = UDP(payload)
 
+# An actionResult normally occurs if there is an issue with the Access Key
+# Check the key is entered correctly at the beginning of the file
+if "actionResult" in data:
+   sys.exit(data["actionResult"])
+
 # Print confirmation data
 print ("Battery "+str(int(100*float(data["data"]["batteryLevel"])/1200))+"%")
 print ("Blind position "+str(data["data"]["currentPosition"])+"%")
