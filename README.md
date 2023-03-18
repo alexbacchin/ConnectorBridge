@@ -16,8 +16,8 @@ Regarless which integration method you decide to use, the bridge must be configu
 ## Documentation
 The documentaion was provided by the manufacturer. This is a starting point for integration.
 
-## Code Samples
+## Other Project
 To be included
-
+Check the [ConnectorBridge CLI](https://github.com/alexbacchin/ConnectorBridgeCLI)
 
 > Written with [StackEdit](https://stackedit.io/).
